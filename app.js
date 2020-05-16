@@ -20,8 +20,7 @@ app.get("/", (request, response) => {
     if (error) {
       throw error;
     }
-    console.log("result is", results.rows);
-    response.json({ info: "Node.js, Express, and Postgres API" });
+    response.json({ users: results.rows });
   });
 });
 
