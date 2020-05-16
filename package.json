@@ -11,5 +11,10 @@
     "backend"
   ],
   "author": "sivaram katta",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pg": "^8.2.1"
+  }
 }
