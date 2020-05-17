@@ -1,4 +1,5 @@
 module.exports = {
+  port: 3000,
   jwt_secret: "i am ironman",
   pg_user: "administrator",
   pg_host: "localhost",
