@@ -52,7 +52,7 @@ app.post("/signup", (req, res) => {
       if (errorOne) {
         res
           .status(500)
-          .send({ error: { msg: "Internal server error", stack: errorOne } });
+          .send({ error: { msg: errorOne.detail, stack: errorOne } });
       }
       pool.query(
         `select id, name from USER_DETAILS where username='${body.username}' and password ='${body.password}';`,
@@ -129,6 +129,38 @@ app.get("/user", (req, res) => {
       });
     });
   }
+});
+
+app.post("/edit", (req, res) => {
+  jwt.verify(req.headers.jwt_token, config.jwt_secret, function (error, data) {
+    if (error) {
+      res.status(500).send({
+        error: { msg: "Internal server error", stack: error }
+      });
+    } else {
+      const { body } = req;
+      let key_value = "";
+      for (let key in body) {
+        if (key_value === "") {
+          key_value += `${key}='${body[key]}'`;
+        } else {
+          key_value += `, ${key}='${body[key]}'`;
+        }
+      }
+      pool.query(
+        queries.edit_user_by_id(key_value, data.id),
+        (errorOne, result) => {
+          if (errorOne) {
+            res
+              .status(500)
+              .send({ error: { msg: errorOne.detail, stack: errorOne } });
+          } else {
+            res.send({ success: true });
+          }
+        }
+      );
+    }
+  });
 });
 
 app.listen(config.port, () => {
