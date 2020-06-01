@@ -52,7 +52,7 @@ app.post("/signup", (req, res) => {
       if (errorOne) {
         res
           .status(500)
-          .send({ error: { msg: "Internal server error", stack: errorOne } });
+          .send({ error: { msg: errorOne.detail, stack: errorOne } });
       }
       pool.query(
         `select id, name from USER_DETAILS where username='${body.username}' and password ='${body.password}';`,
@@ -79,26 +79,87 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/user", (req, res) => {
-  jwt.verify(req.headers.jwt_token, config.jwt_secret, function (error, data) {
-    if (error) {
-      res.status(500).send({
-        error: { msg: "Internal server error", stack: error }
-      });
+  if (Object.keys(req.query).length > 0) {
+    let search = "";
+    const { query } = req;
+    for (let key in query) {
+      if (search === "") {
+        search += `${key}='${query[key]}'`;
+      } else {
+        search += `and ${key}='${query[key]}'`;
+      }
     }
-    pool.query(queries.get_user_by_id(data.id), (errorOne, result) => {
+    pool.query(queries.get_user_by_field(search), (errorOne, result) => {
       if (errorOne) {
         res
           .status(500)
           .send({ error: { msg: "Internal server error", stack: errorOne } });
       }
       const rows = result.rows;
-      if (rows.length == 1) {
+      if (rows.length > 0) {
         const row = rows[0];
         res.send({ data: row });
       } else {
         res.send({ error: { msg: "No user found" } });
       }
     });
+  } else {
+    jwt.verify(req.headers.jwt_token, config.jwt_secret, function (
+      error,
+      data
+    ) {
+      if (error) {
+        res.status(500).send({
+          error: { msg: "Internal server error", stack: error }
+        });
+      }
+      pool.query(queries.get_user_by_id(data.id), (errorOne, result) => {
+        if (errorOne) {
+          res
+            .status(500)
+            .send({ error: { msg: "Internal server error", stack: errorOne } });
+        }
+        const rows = result.rows;
+        if (rows.length == 1) {
+          const row = rows[0];
+          res.send({ data: row });
+        } else {
+          res.send({ error: { msg: "No user found" } });
+        }
+      });
+    });
+  }
+});
+
+app.post("/edit", (req, res) => {
+  jwt.verify(req.headers.jwt_token, config.jwt_secret, function (error, data) {
+    if (error) {
+      res.status(500).send({
+        error: { msg: "Internal server error", stack: error }
+      });
+    } else {
+      const { body } = req;
+      let key_value = "";
+      for (let key in body) {
+        if (key_value === "") {
+          key_value += `${key}='${body[key]}'`;
+        } else {
+          key_value += `, ${key}='${body[key]}'`;
+        }
+      }
+      pool.query(
+        queries.edit_user_by_id(key_value, data.id),
+        (errorOne, result) => {
+          if (errorOne) {
+            res
+              .status(500)
+              .send({ error: { msg: errorOne.detail, stack: errorOne } });
+          } else {
+            res.send({ success: true });
+          }
+        }
+      );
+    }
   });
 });
 

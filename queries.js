@@ -3,9 +3,15 @@ const get_user = (username, password) =>
 const create_user = (name, username, password, email) =>
   `insert into user_details(name,username,password,email) values ('${name}','${username}','${password}','${email}');`;
 const get_user_by_id = id =>
-  `select id, name, email, username from USER_DETAILS where id='${id}';`;
+  `select id, name, email, username, password from USER_DETAILS where id='${id}';`;
+const get_user_by_field = string =>
+  `select id, name, email, username from USER_DETAILS where ${string}`;
+const edit_user_by_id = (key_value, id) =>
+  `update user_details set ${key_value} where id='${id}'`;
 module.exports = {
   get_user,
   create_user,
-  get_user_by_id
+  get_user_by_id,
+  get_user_by_field,
+  edit_user_by_id
 };
