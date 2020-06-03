@@ -85,7 +85,6 @@ router.post("/", (req, res) => {
 
 //public api to delete todo entry
 router.delete("/:id", (req, res) => {
-  console.log(req.params);
   pool.query(queries.delete_todos(req.params.id), (errror_res, data_res) => {
     if (errror_res) {
       res.status(500).send({
@@ -93,6 +92,46 @@ router.delete("/:id", (req, res) => {
       });
     } else {
       res.send({ success: true });
+    }
+  });
+});
+
+router.put("/:id", (req, res) => {
+  const { body } = req;
+  let string = "";
+  for (let key in body) {
+    if (string === "") {
+      if (key === "done") {
+        string += `${key}=${body[key]}`;
+      } else {
+        string += `${key}='${body[key]}'`;
+      }
+    } else {
+      if (key === "done") {
+        string += `, ${key}=${body[key]}`;
+      } else {
+        string += `, ${key}='${body[key]}'`;
+      }
+    }
+  }
+  pool.query(queries.edit_todos(req.params.id, string), (error, data) => {
+    if (error) {
+      res.status(500).send({
+        error: { msg: error.detail, stack: error }
+      });
+    } else {
+      pool.query(
+        queries.get_todos_by_id(req.params.id),
+        (errror_res, data_res) => {
+          if (errror_res) {
+            res
+              .status(500)
+              .send({ error: { msg: errror_res.detail, stack: errror_res } });
+          } else {
+            res.send({ data: data_res.rows });
+          }
+        }
+      );
     }
   });
 });
