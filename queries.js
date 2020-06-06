@@ -11,7 +11,7 @@ const edit_user_by_id = (key_value, id) =>
 
 // todo queries
 const get_todos = (id, date) =>
-  `select * from todo_details where user_id='${id}' and todo_date='${date}'`;
+  `select * from todo_details where user_id='${id}' and todo_date='${date}' order by id`;
 const add_todo = (id, date, description) =>
   `insert into todo_details  (user_id ,todo_date,description) values ('${id}','${date}','${description}')`;
 const delete_todos = id => `delete from todo_details where id=${id}`;

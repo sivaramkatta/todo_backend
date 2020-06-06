@@ -128,7 +128,7 @@ router.put("/:id", (req, res) => {
               .status(500)
               .send({ error: { msg: errror_res.detail, stack: errror_res } });
           } else {
-            res.send({ data: data_res.rows });
+            res.send({ data: data_res.rows[0] });
           }
         }
       );
