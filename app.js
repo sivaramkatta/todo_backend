@@ -5,6 +5,7 @@ const pg = require("pg");
 const config = require("./config");
 const utils = require("./middleware");
 const queries = require("./queries");
+const todo_apis = require("./todo_api");
 
 const app = express();
 const pool = new pg.Pool({
@@ -17,6 +18,7 @@ const pool = new pg.Pool({
 
 app.use(bodyParser.json());
 app.use(utils.getAuthToken);
+app.use("/todo", todo_apis);
 
 app.post("/signin", (req, res) => {
   const { body } = req;
