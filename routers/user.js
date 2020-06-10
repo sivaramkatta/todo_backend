@@ -1,8 +1,8 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const config = require("../config");
 const queries = require("../utils/queries");
 const pool = require("../utils/pool");
+require("dotenv").config();
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post("/signin", (req, res) => {
         const row = rows[0];
         const token = jwt.sign(
           { id: row.id, name: row.name },
-          config.jwt_secret,
+          process.env.jwt_secret,
           { expiresIn: "24h" }
         );
         res.json({ data: { token } });
@@ -57,7 +57,7 @@ router.post("/signup", (req, res) => {
                 const row = rows[0];
                 const token = jwt.sign(
                   { id: row.id, name: row.name },
-                  config.jwt_secret,
+                  process.env.jwt_secret,
                   { expiresIn: "24h" }
                 );
                 res.json({ data: { token } });
@@ -100,7 +100,7 @@ router.get("/", (req, res) => {
       }
     });
   } else {
-    jwt.verify(req.headers.jwt_token, config.jwt_secret, function (
+    jwt.verify(req.headers.jwt_token, process.env.jwt_secret, function (
       error,
       data
     ) {
@@ -133,7 +133,10 @@ router.get("/", (req, res) => {
 
 // protected api to edit user details
 router.put("/", (req, res) => {
-  jwt.verify(req.headers.jwt_token, config.jwt_secret, function (error, data) {
+  jwt.verify(req.headers.jwt_token, process.env.jwt_secret, function (
+    error,
+    data
+  ) {
     if (error) {
       res.status(401).send({
         error: { msg: error.message, stack: error }

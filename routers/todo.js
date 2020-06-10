@@ -1,14 +1,14 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const config = require("../config");
 const queries = require("../utils/queries");
 const pool = require("../utils/pool");
+require("dotenv").config();
 
 const router = express.Router();
 
 //protected api to get todo list of given date
 router.get("/", (req, res) => {
-  jwt.verify(req.headers.jwt_token, config.jwt_secret, (error, data) => {
+  jwt.verify(req.headers.jwt_token, process.env.jwt_secret, (error, data) => {
     if (error) {
       res.status(401).send({
         error: { msg: error.message, stack: error }
@@ -32,7 +32,7 @@ router.get("/", (req, res) => {
 
 // protected api to add todo in given date
 router.post("/", (req, res) => {
-  jwt.verify(req.headers.jwt_token, config.jwt_secret, (error, data) => {
+  jwt.verify(req.headers.jwt_token, process.env.jwt_secret, (error, data) => {
     if (error) {
       res.status(401).send({
         error: { msg: error.message, stack: error }
