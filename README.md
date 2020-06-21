@@ -9,3 +9,5 @@ This is backend repo for todo application built using Node JS
 - configure the ```.env``` file to your local database values
 - run ```yarn``` to install packages needed
 - run ```node app``` to start the development server
+
+NOTE: clone ```todo_frontend``` repo to setup todo application end to end
