@@ -1,0 +1,3 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE user_details(id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name varchar(50) not null , username  varchar(20) not null unique , email  varchar(20) not null unique ,password  varchar(20) not null);
+create table todo_details (id SERIAL primary key , user_id uuid references user_details(id), todo_date date not null, description varchar(200) not null, done bool default false);
